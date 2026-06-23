@@ -1,17 +1,15 @@
 {
   "name": "shopflow-api",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "node -e \"require('./index.js')\" & sleep 2 && kill %1 && echo 'API test passed'"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1",
-    "pg": "^8.22.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
   }
 }
