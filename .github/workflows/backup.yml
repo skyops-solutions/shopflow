@@ -1,0 +1,41 @@
+name: Database Backup
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # щодня о 2:00 ночі UTC
+  workflow_dispatch:       # або вручну через GitHub UI
+
+jobs:
+  backup:
+    name: Backup PostgreSQL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pg_dump
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Run backup
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          mkdir -p /tmp/backups
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_FILE="/tmp/backups/shopflow_backup_${TIMESTAMP}.sql"
+          PGPASSWORD=$DB_PASSWORD pg_dump \
+            -h $DB_HOST \
+            -U $DB_USER \
+            -d $DB_NAME \
+            -f "$BACKUP_FILE"
+          echo "Backup saved: $BACKUP_FILE"
+          ls -lh /tmp/backups/
+
+      - name: Upload backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}
+          path: /tmp/backups/*.sql
+          retention-days: 7
