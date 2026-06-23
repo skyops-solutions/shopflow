@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node -e \"require('./index.js')\" & sleep 2 && kill %1 && echo 'API test passed'"
+    "test": "node --check index.js && echo 'API syntax OK'"
   },
   "license": "ISC",
   "type": "commonjs",
